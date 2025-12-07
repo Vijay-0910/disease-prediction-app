@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import './Dashboard.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function Dashboard() {
   const { user, isAuthenticated } = useAuth();
   const [symptoms, setSymptoms] = useState('');
@@ -28,7 +30,7 @@ function Dashboard() {
   const fetchSearchHistory = async () => {
     try {
       setHistoryLoading(true);
-      const response = await axios.get('http://localhost:5000/api/search-history');
+      const response = await axios.get(`${API_URL}/search-history`);
       if (response.data.success) {
         // Transform database format to match component format
         const transformedHistory = response.data.data.map(item => ({
@@ -75,7 +77,7 @@ function Dashboard() {
     try {
       if (isAuthenticated) {
         // Clear from database
-        await axios.delete('http://localhost:5000/api/search-history');
+        await axios.delete(`${API_URL}/search-history`);
         setSearchHistory([]);
       } else {
         // Clear from localStorage for guest users
@@ -108,7 +110,7 @@ function Dashboard() {
         formData.append('file', uploadedFile);
       }
 
-      const response = await axios.post('http://localhost:5000/api/predict', formData, {
+      const response = await axios.post(`${API_URL}/predict`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
